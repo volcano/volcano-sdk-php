@@ -4,25 +4,102 @@ namespace VolcanoSDK;
 
 class Service
 {
-    protected $baseUrl;
+    protected static $baseUrl;
+    protected static $apiKey;
+    
     protected $callMethod = 'GET';
     protected $returnRaw = false;
-    protected $apiKey;
+    
+    protected $serviceName;
+    protected $routes;
+    
+    protected static $instances = array();
+    
+    public function __construct($serviceName)
+    {
+        $this->serviceName = $serviceName;
+    }
     
     /**
-     * Getter/Setter for $this->baseUrl.
+     * Grabs the service requester for a given service name. If no routes defined
+     * it will Exception.
      * 
-     * @param string $url
-     * 
-     * @return string|this
+     * @param string $serviceName
      */
-    public function baseUrl($url = null) {
-        if (is_null($url)) {
-            return $this->baseUrl;
+    public static function getService($serviceName)
+    {
+        if (!isset(static::$instances[$serviceName])) {
+            $routes = \VolcanoSDK\Router::getInstance()->getRoutes($serviceName);
+            
+            if (empty($routes)) {
+                throw new \Exception("No routes defined for $serviceName");
+            }
+            
+            $inst = new static($serviceName);
+            $inst->routes($routes);
+            
+            static::$instances[$serviceName] = $inst;
         }
         
-        $this->baseUrl = $url;
+        return static::$instances[$serviceName];
+    }
+    
+    /**
+     * Magic __call method to automatically route requests.
+     * 
+     */
+    public function __call($method, $args)
+    {
+        if (empty($this->routes[$method])) {
+            throw new \Exception("No route defined for $method.");
+        }
+        
+        $url_base = $this->routes[$method]['path'];
+        $this->callMethod($this->routes[$method]['method']);
+        
+        $lp = count($args) - 1;
+        
+        if (is_array($args[$lp])) {
+            $call_args = array_pop($args);
+        } else {
+            $call_args = null;
+        }
+        
+        foreach ($args as $pos => $arg) {
+            $pos++;
+            $url_base = str_replace('{' . $pos . '}', $arg, $url_base);
+        }
+        
+        return $this->call($url_base, $call_args);
+    }
+    
+    /**
+     * Getter/Setter for $this->routes.
+     * 
+     * @param string $url
+     */
+    public function routes($routes = null)
+    {
+        if (is_null($routes)) {
+            return $routes;
+        }
+        
+        $this->routes = $routes;
+        
         return $this;
+    }
+    
+    /**
+     * Getter/Setter for static::$baseUrl.
+     * 
+     * @param string $url
+     */
+    public static function baseUrl($url = null) {
+        if (is_null($url)) {
+            return static::$baseUrl;
+        }
+        
+        static::$baseUrl = $url;
     }
     
     /**
@@ -55,20 +132,17 @@ class Service
     }
     
     /**
-     * Getter/Setter for $this->apiKey.
+     * Getter/Setter for static::$apiKey.
      * 
      * @param string $method
-     * 
-     * @return string|this
      */
-    public function apiKey($key = null)
+    public static function apiKey($key = null)
     {
         if (is_null($key)) {
-            return $this->apiKey;
+            return static::$apiKey;
         }
         
-        $this->apiKey = $key;
-        return $this;
+        static::$apiKey = $key;
     }
     
     /**
@@ -114,8 +188,8 @@ class Service
             $args = array($args);
         }
         
-        if (!empty($this->apiKey)) {
-            $args['api_key'] = $this->apiKey;
+        if (!empty(static::$apiKey)) {
+            $args['api_key'] = static::$apiKey;
         }
         
         if ($this->callMethod == 'POST') {
@@ -134,7 +208,7 @@ class Service
             }
         }
         
-        $url = $this->baseUrl . $url;
+        $url = static::$baseUrl .'/' . $url;
         
         $ch = curl_init($url);
         curl_setopt_array($ch, $curl_params);
