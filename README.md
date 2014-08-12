@@ -14,8 +14,11 @@ require_once 'src/Sellers/Seller.php';
 
 $seller = new \VolcanoSDK\Sellers\Seller;
 
-$seller->baseUrl('https://volcano/api');
-$seller->apiKey('notMyRealKey');
+\VolcanoSDK\Service::baseUrl('https://volcano/api');
+\VolcanoSDK\Service::apiKey('notMyRealKey');
 
-var_dump($seller->get(1));
+var_dump(\VolcanoSDK\Service::getService('Seller')->get(1));
+var_dump(\VolcanoSDK\Service::getService('Seller')->listContacts(1));
+var_dump(\VolcanoSDK\Service::getService('Seller')->getContact(1, 1));
+
 ```
