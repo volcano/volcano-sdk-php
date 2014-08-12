@@ -128,6 +128,8 @@ class Service
             throw new \Exception('Invalid HTTP Verb');
         }
         
+        $this->callMethod = $method;
+        
         return $this;
     }
     
