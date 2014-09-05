@@ -19,7 +19,10 @@ class Router
     
     public function loadRoutes()
     {
-        $this->_routeList = include dirname(__FILE__) . '/../routes.php';
+        $this->_routeList = json_decode(
+            file_get_contents(dirname(__FILE__) . '/../routes.json'),
+            true
+        );
     }
     
     public function getRoutes($serviceName)
