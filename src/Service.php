@@ -210,7 +210,7 @@ class Service
             }
         }
         
-        $url = static::$baseUrl .'/' . $url;
+        $url = static::$baseUrl .'/api/' . $url;
         
         $ch = curl_init($url);
         curl_setopt_array($ch, $curl_params);
