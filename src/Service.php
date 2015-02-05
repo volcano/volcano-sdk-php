@@ -28,6 +28,8 @@ class Service
      */
     public static function getService($serviceName)
     {
+        $serviceName = strtolower($serviceName);
+        
         if (!isset(static::$instances[$serviceName])) {
             $routes = \VolcanoSDK\Router::getInstance()->getRoutes($serviceName);
             
@@ -67,7 +69,7 @@ class Service
         
         foreach ($args as $pos => $arg) {
             $pos++;
-            $url_base = str_replace('{' . $pos . '}', $arg, $url_base);
+            $url_base = str_replace('$' . $pos, $arg, $url_base);
         }
         
         return $this->call($url_base, $call_args);
@@ -97,6 +99,10 @@ class Service
     public static function baseUrl($url = null) {
         if (is_null($url)) {
             return static::$baseUrl;
+        }
+        
+        if (substr($url, -1) != '/') {
+            $url .= '/';
         }
         
         static::$baseUrl = $url;
@@ -210,7 +216,7 @@ class Service
             }
         }
         
-        $url = static::$baseUrl .'/api/' . $url;
+        $url = static::$baseUrl . $url;
         
         $ch = curl_init($url);
         curl_setopt_array($ch, $curl_params);
