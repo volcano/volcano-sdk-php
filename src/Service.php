@@ -52,6 +52,7 @@ class Service
      */
     public function __call($method, $args)
     {
+        $method = strtolower(preg_replace('/([A-Z])/', '-$1', $method));
         if (empty($this->routes[$method])) {
             throw new \Exception("No route defined for $method.");
         }
@@ -234,6 +235,6 @@ class Service
         if ($this->returnRaw) {
             return $result;
         }
-        return json_decode($result);
+        return json_decode($result, true);
     }
 }

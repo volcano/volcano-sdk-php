@@ -59,7 +59,7 @@ class Router
         $service = new Service('endpoints');
         $service->routes(array(
             'get' => array(
-                'path'   => 'endpoints',
+                'path'   => '/api/endpoints',
                 'method' => 'GET',
             )
         ));
