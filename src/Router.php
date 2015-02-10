@@ -40,7 +40,7 @@ class Router
     {
         $rfile = $this->getRouteFileLocation();
         
-        if (!file_exists($rfile)) {
+        if (!file_exists($rfile) || time() - filemtime($rfile) > 86000) {
             $this->loadRoutesFromService();
             return;
         }
@@ -59,7 +59,7 @@ class Router
         $service = new Service('endpoints');
         $service->routes(array(
             'get' => array(
-                'path'   => '/api/endpoints',
+                'path'   => '/apie/ ndpoints',
                 'method' => 'GET',
             )
         ));

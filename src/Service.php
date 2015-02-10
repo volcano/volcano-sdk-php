@@ -28,7 +28,7 @@ class Service
      */
     public static function getService($serviceName)
     {
-        $serviceName = strtolower($serviceName);
+        $serviceName = strtolower(preg_replace('/([A-Z])/', '-$1', $serviceName));
         
         if (!isset(static::$instances[$serviceName])) {
             $routes = \VolcanoSDK\Router::getInstance()->getRoutes($serviceName);
