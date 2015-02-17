@@ -1,14 +1,14 @@
 {
-    "name": "cthos/volcano-sdk-php",
+    "name": "volcano/volcano-sdk-php",
     "description": "VolcanoCRM PHP SDK",
     "keywords": ["volcano", "crm", "volcanocrm", "sdk"],
     "type": "library",
-    "homepage": "https://github.com/cthos/volcano-sdk-php",
+    "homepage": "https://github.com/volcano/volcano-sdk-php",
     "license": "GPLv3",
     "authors": [
         {
-            "name": "Cthos",
-            "homepage": "https://github.com/cthos"
+            "name": "Volcano",
+            "homepage": "https://github.com/volcano"
         }
     ],
     "require": {
